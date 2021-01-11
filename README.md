@@ -1,12 +1,25 @@
+# Minianalytics
 
-Layout
+Motivation: The logfile is there, yet we install Google Analytics because it has more options. After that, we use Google Analytics to derive the number of page views. That's a shame.
 
+Architecture: Batch-oriented. The logfiles come in in source, they get converted in full, then queried for reports, all this is stored in data/*.
+
+Next Step: make .sqlite file out of data and publish with datasette.
+
+
+
+
+# Layout
+
+Step 1: .log to .tsv.gz
 source/[dslug].*gz -> Source Files
-sql/[qslug]*.sql -> Queries
-data/raw/[dslug]*.gz -> TSV files
-data/[qslug]*.gz -> Results
+data/full/[dslug]*.gz -> TSV files
+
+Step 2: .tsv.gz  to reports.tsv.gz
+
+reports/[rslug]*.sh -> reports
+for each (rslug, dslug):
+data/[rslug]/[dslug]-[rslug].tsv.gz -> results
 
 
-For each source/*.gz produce a data/raw/*.gz
 
-For each sql/qslug*.sql produce a data/qslug.tsv.gz from all data/full/*tsv

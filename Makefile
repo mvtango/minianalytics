@@ -6,22 +6,13 @@ SHELL := /bin/bash
 
 .DEFAULT_GOAL := help
 
-
-full: $(subst source/, data/full/, $(patsubst %.log.gz, %.tsv.gz, $(wildcard source/*.log.gz)))
+full: ## convert log to tsv
+full: $(subst source/, data/full/, $(patsubst %.log.gz, %.tsv.gz, $(wildcard source/*.log.gz))) 
 
 data/full/%.tsv.gz: source/%.log.gz
 	export TMPFILE=$$(mktemp ) \
 	&& (zcat $< | python ./scripts/commonlog2tsv.py --header | gzip -c >$$TMPFILE) \
 	&& mv $$TMPFILE $@ 
-
-data/combined/full.tsv.gz: data/full/*.tsv.gz
-	export TMPFILE=$$(mktemp )
-	(zcat $< | head -1 
-	for A in $?; do
-	  zcat $$A | sed 1d
-	done
-	) | gzip -c >$$TMPFILE 
-	[[ "$$?" == "0" ]] && mv $$TMPFILE $@
 
 
 define REPORT_template =
@@ -33,16 +24,33 @@ endef
 
 reportnames:= $(patsubst reports/%.sh,%,$(wildcard reports/*.sh))
 
-$(foreach pipeline,$(reportnames),$(eval $(call REPORT_template,$(pipeline))))
+partition_reports:= $(foreach reportname,$(reportnames), $(foreach datafile,$(wildcard data/full/*.tsv.gz), data/$(reportname)/$(patsubst data/full/%.tsv.gz,%,$(datafile))-$(reportname).tsv.gz))
+
+
+
+$(foreach name,$(reportnames),$(eval $(call REPORT_template,$(name))))
 
 dirs: $(patsubst %,data/%,$(reportnames))
 
+# make data/(report) directories
 data/%:
 	mkdir -p $@
 
-reports:= $(foreach reportname,$(reportnames), $(foreach datafile,$(wildcard data/full/*.tsv.gz), data/$(reportname)/$(patsubst data/full/%.tsv.gz,%,$(datafile))-$(reportname).tsv.gz))
 
-reports: full dirs $(reports)
+
+# join data/(report)/(partition)-(report).tsv.gz to data/(report).tsv.gz
+data/%.tsv.gz: data/%
+	q -H --tab-delimited -O "select * from $</*.gz" | gzip -c >$@
+reports:= $(foreach reportname,$(reportnames),data/$(reportname).tsv.gz)
+
+partition_reports: $(partition_reports)
+
+reports: ## generate reports 
+reports: full dirs partition_reports $(reports)
+
+
+test:
+	echo $(reports)
 
 # queries: full $(subst sql/, data/, $(patsubst %.sql, %.tsv.gz, $(wildcard sql/*.sql)))
 #
