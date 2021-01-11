@@ -46,8 +46,10 @@ reports:= $(foreach reportname,$(reportnames),data/$(reportname).tsv.gz)
 partition_reports: $(partition_reports)
 
 reports: ## generate reports 
-reports: full dirs partition_reports $(reports)
+reports: full dirs $(reports)
 
+
+all: partition_reports reports
 
 test:
 	echo $(reports)
