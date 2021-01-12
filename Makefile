@@ -16,7 +16,7 @@ data/full/%.tsv.gz: source/%.log.gz
 
 
 define REPORT_template =
-data/$(1)/%-$(1).tsv.gz: data/full/%.tsv.gz reports/$(1).sh
+data/$(1)/%-$(1).tsv.gz: data/full/%.tsv.gz reports/$(1).sh data/$(1)
 	export TMPFILE=$$$$(mktemp ) \
 	&& (zcat $$< | reports/$(1).sh | gzip -c >$$$$TMPFILE ) \
 	&& mv $$$$TMPFILE $$@
