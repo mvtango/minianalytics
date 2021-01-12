@@ -15,8 +15,11 @@ q -H --output-header --tab-delimited '
       referer, day ' \
 | python scripts/extract.py \
          "referer=://(?P<host>[^/]+)" \
-         "host=(?P<source>[wm]\.google|baidu|yandex|wikipedia|duckduckgo|bing|facebook|t\.co|ihr\.world)" \
+         "host=(?P<source>[wm]\.google|baidu|yandex|wikipedia|duckduckgo|bing|facebook|yahoo|msn|t\.co|ihr\.world)" \
 | q -H  --output-header --tab-delimited '
       select day, sum(c) as c, host, max(source) as source, max(referer) as example 
-      from - group by host, day order by c desc
+          from - 
+          where host != "scwd.ihr.world" 
+          group by host, day 
+          order by c desc
   '
