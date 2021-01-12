@@ -7,6 +7,11 @@ USAGE: %(prog)s col1=regexp1 col2=regexp2 col3=regexp3  <TSVIN >TSVOUT
 
 Add columns to tsv file by applying regular expressions to column values.
 
+Example:  url=://(?P<host>[^/]+)  would take the column url, extract the hostname and put it
+into the column host.
+
+The new columns are appended in order. They are available for further extraction steps.
+
 Inspired by [RegExSerDe](https://github.com/apache/hive/blob/trunk/contrib/src/java/org/apache/hadoop/hive/contrib/serde2/RegexSerDe.java).
 
 """
