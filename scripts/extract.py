@@ -22,15 +22,21 @@ import csv
 import itertools
 from collections import OrderedDict
 
+
+class OrderedDefaultListDict(OrderedDict): #name according to default
+    def __missing__(self, key):
+        self[key] = value = [] #change to whatever default you want
+        return value
+
 def process(argl) :
     rex = OrderedDict()
-    rex = { a[0] : re.compile(a[1])
+    rex = [ (a[0], re.compile(a[1]))
             for a in
             (v.split("=",1) for v in argl)
-          }
+          ]
     extrakeys = list(itertools.chain.from_iterable(( c for c in
-                   (  re.findall(r'<([a-z]+)>', p.pattern)
-                        for p in rex.values()
+                   (  re.findall(r'<([a-z]+)>', p[1].pattern)
+                        for p in rex
                     )
                 )))
     sys.stderr.write(f"Matching: {rex}\n")
@@ -39,13 +45,13 @@ def process(argl) :
     in_file=csv.DictReader(sys.stdin, delimiter="\t")
     out_file=None
     for row in in_file:
-        for (n, v) in rex.items():
+        for (n, v) in rex:
             if not n in row.keys():
                pass
             else:
-                extracted = v.search(row[n])
-                if extracted is not None:
-                    row.update(extracted.groupdict())
+               extracted = v.search(row[n])
+               if extracted is not None:
+                   row.update(extracted.groupdict())
         if out_file is None:
             keys = list(row.keys())
             for k in extrakeys:
