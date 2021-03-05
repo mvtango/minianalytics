@@ -2,9 +2,27 @@
 
 Motivation: The logfile is there, yet we install Google Analytics because it has more options. After that, we use Google Analytics to derive the number of page views. That's a shame.
 
-Architecture: Batch-oriented. The logfiles come in in source, they get converted in full, then queried for reports, all this is stored in data/*.
+Built with: Makefile, Unix Pipes, Python, Q.
 
-Next Step: make .sqlite file out of data and publish with datasette.
+## How does it work
+
+Common logfiles arrive in 
+
+`source/`
+
+they get converted to .tsv.gz in 
+
+`full/`
+
+then queried for reports using scripts in `reports/` that do Unix-Pipe-TSV transformations.  
+
+The result is stored in 
+
+`data/`
+
+Common python helpers (generate session ID out of User Agent + IP + day, decode URL-encoded values) are stored in scripts/
+
+Next step: make .sqlite file out of data and publish with datasette.
 
 
 
