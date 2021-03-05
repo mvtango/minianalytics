@@ -64,6 +64,9 @@ EXAMPLES:=./data/ua/example-ua.tsv.gz ./data/searches/example-searches.tsv.gz ./
 .PHONY: remove-examples
 remove-examples:
 	rm $(EXAMPLES)
+
+restore-examples:
+	git checkout -- $(EXAMPLES)
 # queries: full $(subst sql/, data/, $(patsubst %.sql, %.tsv.gz, $(wildcard sql/*.sql)))
 #
 #data/%.tsv.gz: sql/%.sql data/combined/full.tsv.gz
