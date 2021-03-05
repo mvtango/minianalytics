@@ -59,12 +59,18 @@ test:
 	echo PARTITIONED_REPORTS: $(partition_reports)
 	echo REPORTS: $(reports)
 
+
+EXAMPLES:=./data/ua/example-ua.tsv.gz ./data/searches/example-searches.tsv.gz ./data/full/example.tsv.gz ./data/head1/example-head1.tsv.gz ./data/tail/example-tail.tsv.gz ./data/sessiontest/example-sessiontest.tsv.gz ./data/hits/example-hits.tsv.gz ./data/sessions/example-sessions.tsv.gz ./data/referrer/example-referrer.tsv.gz ./source/example.log.gz
+.PHONY: remove-examples
+remove-examples:
+	rm $(EXAMPLES)
 # queries: full $(subst sql/, data/, $(patsubst %.sql, %.tsv.gz, $(wildcard sql/*.sql)))
 #
 #data/%.tsv.gz: sql/%.sql data/combined/full.tsv.gz
 #	echo combine $? to $@
 
 
+	
 
 
 
