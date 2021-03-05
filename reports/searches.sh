@@ -29,4 +29,5 @@ q -H --output-header --tab-delimited '
           group by name, day, category
           order by day desc
   '\
-| python scripts/unquote.py
+| python scripts/unquote.py name
+
