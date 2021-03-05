@@ -17,10 +17,12 @@ data/full/%.tsv.gz: source/%.log.gz
 
 define REPORT_template =
 data/$(1)/%-$(1).tsv.gz: data/full/%.tsv.gz reports/$(1).sh 
-	mkdir -p data/$(1) 
+	@mkdir -p data/$(1) 
+	printf "$$@ ----------- Start\n" >&2
 	export TMPFILE=$$$$(mktemp ) \
 	&& (zcat $$< | reports/$(1).sh | gzip -c >$$$$TMPFILE ) \
 	&& mv $$$$TMPFILE $$@
+	printf "$$@ ----------- End\n\n" >&2
 endef
 
 reportnames:= $(patsubst reports/%.sh,%,$(wildcard reports/*.sh))
@@ -31,7 +33,6 @@ partition_reports:= $(foreach reportname,$(reportnames), $(foreach datafile,$(wi
 
 $(foreach name,$(reportnames),$(eval $(call REPORT_template,$(name))))
 
-.PHONY: dirs
 dirs: $(patsubst %,data/%,$(reportnames))
 
 # make data/(report) directories

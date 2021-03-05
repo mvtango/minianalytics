@@ -22,4 +22,10 @@ for each (rslug, dslug):
 data/[rslug]/[dslug]-[rslug].tsv.gz -> results
 
 
+# Requirements
+
+  - q http://harelba.github.io/q/
+  - python
+
+
 
